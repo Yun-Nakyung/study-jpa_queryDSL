@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: nyyun
+    url: jdbc:mysql://ls-407e4b156de499a36a744f356681864a305ab178.cvxedmimklz0.ap-northeast-2.rds.amazonaws.com:3306/nyyun
+    password: nyyun
+  main:
+    allow-circular-references: 'true'
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  jpa:
+    show-sql: true
+    properties:hibernate:format_sql: true
+    hibernate:
+      ddl-auto: update
+
+
+
+server:
+  port: 8080

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.edu.signup.model.mapper.UserMapper">
+
+  <insert id="createUser" useGeneratedKeys="true">
+    insert
+      into User(user_name, user_email, user_phone, user_password, user_nickname, user_gender, user_birth, user_role)
+    values
+          (#{userName}, #{userEmail}, #{userPhone}, #{userPassword}, #{userNickName}, #{userGender}, #{userBirth}, #{userRole})
+  </insert>
+
+  <select id="isDuplicate" resultType="java.lang.Boolean">
+    select count(user_email)
+      from User
+     where user_email = #{userEmail}
+  </select>
+
+  <select id="selectAllUsers" resultType="com.edu.signup.model.dto.findUser.AdminFindUserRes">
+    select user_email, user_name, user_nickname, user_gender, user_birth, user_phone, user_lock
+      from User
+  </select>
+
+  <select id="findByEmail" resultType="com.edu.signup.model.dto.login.UserSignInRes">
+    select user_email, user_lock, user_role
+    from User
+    where user_email = #{username}
+  </select>
+
+  <select id="selectLoginUser" resultType="com.edu.signup.model.dto.login.UserSignInRes">
+    select user_email, user_password, user_name, user_nickname, user_gender, user_birth, user_phone, login_count, user_role, user_state
+    from User
+    where user_email = #{userEmail}
+  </select>
+
+  <select id="selectLoginCount" resultType="java.lang.Integer">
+    select login_count
+      from User
+     where user_email = #{userEmail}
+  </select>
+
+  <update id="increaseLoginCount">
+    update User
+       set login_count = User.login_count+1
+     where user_email = #{userEmail}
+  </update>
+
+  <update id="lockLoginUser" >
+    update User
+       set user_lock = true
+     where user_email = #{userEmail}
+  </update>
+
+  <select id="checkUserForChangePwd" resultType="com.edu.signup.model.dto.changePwd.ChangePwdRes">
+    select user_email, user_password, user_role
+      from User
+     where user_email = #{userEmail}
+  </select>
+
+  <update id="changedUserPassword" parameterType="com.edu.signup.model.dto.login.UserSignInRes">
+    update User
+       set user_password = #{userPassword}, user_lock = false
+     where user_email = #{userEmail}
+  </update>
+
+  <update id="changedLoginCount">
+    update User
+    set  login_count = 0
+    where user_email = #{userEmail}
+  </update>
+
+  <insert id="insertLoginHistory" useGeneratedKeys="true">
+    insert
+      into LoginHistory(user_email, user_ip, user_os, user_platform, login_time, login_state, login_message)
+    values (#{userEmail}, #{userIp}, #{userOs}, #{userPlatform}, #{loginTime}, #{loginState}, #{loginMessage})
+  </insert>
+
+  <select id="findLoginHistory" resultType="com.edu.signup.model.dto.login.LoginHistoryRes">
+    select user_email, user_ip, user_os, user_platform, login_time, login_state, login_message, login_no
+      from LoginHistory
+     where user_email = #{userEmail}
+  </select>
+
+  <select id="findUserInfo" resultType="com.edu.signup.model.dto.updateUser.UserInfoRes">
+    select user_email, user_name, user_phone, user_nickname, user_gender, user_birth
+      from User
+     where user_email = #{userEmail}
+  </select>
+
+  <update id="clearLoginLock" >
+    update User
+       set user_lock = false
+     where user_email = #{userEmail}
+  </update>
+
+  <update id="updateUserInfo">
+    update User
+    <set>
+        <if test="userNickName != null">user_nickname = #{userNickName},</if>
+        <if test="userPhone != null">user_phone = #{userPhone}</if>
+    </set>
+    where user_email = #{userEmail}
+  </update>
+
+  <update id="deleteUser">
+    update User
+       set user_state = 'N'
+     where user_email = #{userEmail}
+  </update>
+
+  <select id="selectUserInfoByEmail" resultType="com.edu.signup.model.dto.findUser.AdminFindUserRes">
+    select user_email, user_name, user_nickname, user_gender, user_birth, user_phone, user_lock
+    from User
+    where user_email = #{userEmail}
+  </select>
+</mapper>
